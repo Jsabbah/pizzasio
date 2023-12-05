@@ -1,5 +1,5 @@
 # Pizza SIO
- ![image]({https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white})
+ ![image](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
 ## Projet Web pour le BTS SIO option SLAM 2224 du CIPECMA.
  
 ### Description
