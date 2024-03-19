@@ -19,12 +19,13 @@ class StepModel extends Model
         return $this->find($id);
     }
 
+
     public function getAllStep()
     {
+
         $builder = $this->builder();
-        return $builder->get()->getResultArray();
+        return $builder->orderBy('order', 'ASC')->get()->getResultArray();
     }
-    
     public function createStep(Step $step)
     {
         return $this->insert($step);

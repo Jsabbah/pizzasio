@@ -14,4 +14,9 @@ class Admin extends BaseController {
         return $this->view('admin/test');
     }
 
+    public function getApi() {
+        $this->menu = "api";
+        return $this->view('admin/api');
+    }
+
 }

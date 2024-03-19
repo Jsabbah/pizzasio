@@ -6,52 +6,176 @@ use App\MyClass\Pizza as ClassPizza;
 
 class Pizza extends BaseController
 {
-
     public function getIndex()
     {
-
         return $this->view('/pizza/index');
     }
 
 
     public function getEdit($id_pizza)
     {
-        $this->addBreadcrumb('Administrateur', '#');
+        $this->addBreadcrumb('Pizza', '#');
         $this->addBreadcrumb('Gestion des pizza', ['Pizza']);
         $stepModel = model('StepModel');
         $steps = $stepModel->getAllStep();
         $categoryModel = model('CategoryModel');
         $categories = $categoryModel->getAllCategory();
+        $stepModel = model('StepModel');
+        $step = $stepModel->getAllStep();
+
         $ingredientModel = model('IngredientModel');
-        $ingredients = $ingredientModel->getAllIngredient();
+        $pate =  $ingredientModel->getIngredientByIdCategory(10);
+        $base =  $ingredientModel->getIngredientByIdCategory(13);
         if ($id_pizza == 'new') {
-            $this->title = "Créer la pizza";
             $this->addBreadcrumb('Création pizza ', ['Pizza', 'edit', 'new']);
-            return $this->view(
-                '/pizza/edit',
-                [
-                    'steps' => $steps,
-                    'categories' => $categories,
-                    'ingredients' => $ingredients,
-                ]
-            );
+            return $this->view('/pizza/edit', [
+                'steps' => $steps,
+                'categories' => $categories,
+                'step' => $step,
+                'pate' => $pate,
+                'base' => $base
+            ]);
         }
-        $this->title = "Gérer la pizza";
         $pizzaModel = model('PizzaModel');
         $pizza = $pizzaModel->getPizzaById($id_pizza);
-        $this->addBreadcrumb('Edition de ' . $pizza['name'], ['Pizza']);
+        $this->title = "Gérer la pizza";
         if ($pizza) {
-            return $this->view('/pizza/edit', ['pizza' => $pizza]);
+            $composePizzaModel = model('ComposePizzaModel');
+            $pizza_ing = $composePizzaModel->getIngredientByPizzaId($pizza['id']);
+            $this->addBreadcrumb('Edition de ' . $pizza['name'], ['Pizza']);
+            $old_price = 0;
+
+            for ($i = 0; $i < sizeof($base); $i++) {
+                if ($base[$i]['id'] == $pizza['base']) {
+                    $old_price += $base[$i]['price'];
+                }
+            }
+            for ($i = 0; $i < sizeof($pate); $i++) {
+                if ($pate[$i]['id'] == $pizza['dough']) {
+                    $old_price += $pate[$i]['price'];
+                }
+            }
+            foreach ($pizza_ing as $ing) {
+                $old_price += $ing->price;
+            }
+            return $this->view('/pizza/edit', [
+                'steps' => $steps,
+                'categories' => $categories,
+                'step' => $step,
+                'pate' => $pate,
+                'base' => $base,
+                'pizza' => $pizza,
+                'pizza_ing' => $pizza_ing,
+                'old_price' => $old_price,
+            ]);
         }
-        $this->error("La pizza n'existe pas.");
+
         return $this->redirect('Pizza');
     }
 
-    public function getAjaxCategories(){
-        $idStep = $this->request->getVar('idStep');
-        $categoryModel = model('CategoryModel');
-        $categories = $categoryModel->getCategoriesByIdStep($idStep);
+    public function getAjaxPizzaContent()
+    {
+        $pizzaModel = model('PizzaModel');
+        $composePizzaModel = model('ComposePizzaModel');
+        $ingredientModel = model('IngredientModel');
+        $idPizza = $this->request->getVar('idPizza');
+        $pizza = $pizzaModel->getPizzaById($idPizza);
+        if ($pizza) {
+            $pizza_ing = $composePizzaModel->getIngredientByPizzaId($pizza['id']);
+            $base = $ingredientModel->getIngredientById($pizza['base']);
+            $pate = $ingredientModel->getIngredientById($pizza['dough']);
+        }
+        $result = array();
+        $result['pizza'] = $pizza;
+        $result['ingredients'] = $pizza_ing;
+        $result['base'] = $base;
+        $result['pate'] = $pate;
+        return $this->response->setJSON($result);
+    }
 
-        return $this->response->setJSON($categories);
+    public function postSearchPizza()
+    {
+        $pizzaModel = model('PizzaModel');
+
+        // Paramètres de pagination et de recherche envoyés par DataTables
+        $draw        = $this->request->getPost('draw');
+        $start       = $this->request->getPost('start');
+        $length      = $this->request->getPost('length');
+        $searchValue = $this->request->getPost('search')['value'];
+
+        // Obtenez les informations sur le tri envoyées par DataTables
+
+        $orderColumnIndex = $this->request->getPost('order')[0]['column'];
+        $orderDirection = $this->request->getPost('order')[0]['dir'];
+        $orderColumnName = $this->request->getPost('columns')[$orderColumnIndex]['data'];
+
+
+
+        // Obtenez les données triées et filtrées pour la colonne "sku_syaleo"
+        $data = $pizzaModel->getPaginatedPizza($start, $length, $searchValue, $orderColumnName, $orderDirection);
+
+
+
+        // Obtenez le nombre total de lignes sans filtre
+        $totalRecords = $pizzaModel->getTotalPizza();
+
+        // Obtenez le nombre total de lignes filtrées pour la recherche
+        $filteredRecords = $pizzaModel->getFilteredPizza($searchValue);
+
+        $result = [
+            'draw'            => $draw,
+            'recordsTotal'    => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data'            => $data,
+        ];
+        return $this->response->setJSON($result);
+    }
+
+    public function postResult()
+    {
+        $data = $this->request->getPost();
+        $pizzaModel = model('PizzaModel');
+        $id = $pizzaModel->createPizza($data['name'], $data['base'], $data['pate']);
+        $composePizzaModel = model('ComposePizzaModel');
+        $data_ing = array();
+        foreach ($data['ingredients'] as $ing) {
+            $data_ing[] = ['id_pizza' => (int) $id, 'id_ingredient' => (int) $ing];
+        }
+        $composePizzaModel->insertPizzaIngredients($data_ing);
+        return $this->redirect('Pizza');
+    }
+
+    public function postEditedResult()
+    {
+        $data = $this->request->getPost();
+        $pizzaModel = model('PizzaModel');
+        $composePizzaModel = model('ComposePizzaModel');
+
+        if (isset($data['dough_suppr']) || isset($data['base_suppr'])) {
+            $pizzaModel->deletePizzaDoughOrBase($data);
+        }
+        if (isset($data['ing_suppr'])) {
+            $composePizzaModel->deletePizzaIngredients($data);
+        }
+        if (isset($data['dough']) || isset($data['base'])) {
+            $pizzaModel->updatePizza($data);
+        }
+        if (isset($data['ingredients'])) {
+            $data_ing = array();
+            foreach ($data['ingredients'] as $ing) {
+                $data_ing[] = ['id_pizza' => (int) $data['id'], 'id_ingredient' => (int) $ing];
+            }
+            $composePizzaModel->insertPizzaIngredients($data_ing);
+        }
+    }
+
+
+    public function getAjaxIngredients()
+    {
+        $idCateg = $this->request->getVar('idCateg');
+        $ingredientModel = model('IngredientModel');
+        $ingredients = $ingredientModel->getIngredientByIdCategory($idCateg);
+
+        return $this->response->setJSON($ingredients);
     }
 }
