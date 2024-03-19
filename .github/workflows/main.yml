@@ -36,6 +36,11 @@ jobs:
         echo "    RewriteEngine On" >> .htaccess
         echo "    RewriteRule ^(.*)$ public/$1 [L]" >> .htaccess
         echo "</IfModule>" >> .htaccess
+        echo "" >> .htaccess
+        echo "<FilesMatch \"^\.\">" >> .htaccess
+        echo "    Require all denied" >> .htaccess
+        echo "    Satisfy All" >> .htaccess
+        echo "</FilesMatch>" >> .htaccess
         cat .htaccess
 
     - name: Create .htaccess for public directory
@@ -43,7 +48,7 @@ jobs:
         echo "<IfModule mod_rewrite.c>" > public/.htaccess
         echo "    Options +FollowSymlinks" >> public/.htaccess
         echo "    RewriteEngine On" >> public/.htaccess
-        echo "    RewriteBase /${{ secrets.URL_PREFIX }}/public" >> public/.htaccess
+        echo "    RewriteBase ${{ secrets.URL_PREFIX }}public" >> public/.htaccess
         echo "" >> public/.htaccess
         echo "    RewriteCond %{REQUEST_FILENAME} !-d" >> public/.htaccess
         echo "    RewriteCond %{REQUEST_URI} (.+)/$" >> public/.htaccess
