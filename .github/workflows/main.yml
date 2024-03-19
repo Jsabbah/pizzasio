@@ -9,9 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
     - name: Install Composer dependencies
       run: composer install --no-dev
 
@@ -20,11 +17,13 @@ jobs:
 
     - name: Modify .env
       run: sed -i 's/ENVIRONMENT = development/ENVIRONMENT = production/g' .env
-
+      
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
     - name: Deploy to FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: ${{ secrets.SERVER_DIR }}
