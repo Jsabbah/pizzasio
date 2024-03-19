@@ -1,0 +1,27 @@
+name: Release Workflow
+
+on:
+  release:
+    types: [created]
+    
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Modify app.php
+      run: sed -i "s|\$baseURL = '.*';|\$baseURL = '${{ secrets.BASE_URL }}';|g" app/config/app.php
+
+    - name: Modify .env
+      run: sed -i 's/ENVIRONMENT = development/ENVIRONMENT = production/g' .env
+
+    - name: Deploy to FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.SERVER_DIR }}
