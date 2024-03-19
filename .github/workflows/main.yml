@@ -6,9 +6,15 @@ on:
     
 jobs:
   deploy:
+    DEBUG: true
     runs-on: ubuntu-latest
     
     steps:
+    
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
     - name: Install Composer dependencies
       run: composer install --no-dev
 
@@ -21,9 +27,6 @@ jobs:
       run: |
         sed -i "s|\$baseURL = '.*';|\$baseURL = '${{ secrets.BASE_URL }}';|g" app/Config/App.php
         cat app/Config/App.php
-
-    - name: Checkout repository
-      uses: actions/checkout@v4
       
     - name: Debug repository files
       run: ls -lR
