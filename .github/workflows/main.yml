@@ -15,7 +15,7 @@ jobs:
       run: composer install --no-dev
 
     - name: Debug secret.BASE_URL
-      run: echo "Content of secret.BASE_URL: ${{ secrets.BASE_URL }}"
+      run: echo ${{ secrets.BASE_URL }}
 
     - name: Modify App.php
       run: |
