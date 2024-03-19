@@ -14,14 +14,24 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --no-dev
 
+    - name: Debug secret.BASE_URL
+      run: echo "Content of secret.BASE_URL: ${{ secrets.BASE_URL }}"
+
     - name: Modify App.php
-      run: sed -i "s|\$baseURL = '.*';|\$baseURL = '${{ secrets.BASE_URL }}';|g" app/Config/App.php
+      run: |
+        sed -i "s|\$baseURL = '.*';|\$baseURL = '${{ secrets.BASE_URL }}';|g" app/Config/App.php
+        cat app/Config/App.php
 
     - name: Modify .env
-      run: sed -i 's/ENVIRONMENT = development/ENVIRONMENT = production/g' .env
+      run: |
+        sed -i 's/ENVIRONMENT = development/ENVIRONMENT = production/g' .env
+        cat .env
       
     - name: Checkout repository
       uses: actions/checkout@v4
+      
+    - name: Debug repository files
+      run: ls -lR
       
     - name: Deploy to FTP
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
