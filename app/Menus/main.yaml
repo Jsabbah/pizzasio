@@ -35,6 +35,10 @@ pizza:
       title: Gérer Pizza
       url: /Pizza
       icon: <i class="fa-solid fa-pizza-slice"></i>
+api:
+  title: Api
+  url: /Admin/Api
+  icon: <i class="fa-solid fa-toolbox"></i>
 admin:
   title: Administration
   url: /Admin
