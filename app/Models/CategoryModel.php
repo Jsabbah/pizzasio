@@ -19,17 +19,17 @@ class CategoryModel extends Model
         return $this->find($id);
     }
 
+    public function getCategoryByIdStep($id_step)
+    {
+        return $this->where('id_step', $id_step)->findAll();
+    }
 
     public function getAllCategory()
     {
+
         $builder = $this->builder();
         return $builder->get()->getResultArray();
     }
-
-    public function getCategoriesByIdStep($id_step){
-        return $this->where('id_step',$id_step)->get()->getResultArray();
-    }
-
     public function createCategory(Category $category)
     {
         return $this->insert($category);

@@ -40,7 +40,7 @@
             "serverSide": true,
             "pageLength": 50,
             "ajax": {
-                "url": "/Ingredient/SearchIngredient",
+                "url": "<?= site_url('Ingredient/SearchIngredient') ?>",
                 "type": "POST"
             },
             "columns": [

@@ -1,5 +1,4 @@
-</div>
-    </main>
+</main>
       <!--begin::Page loading(append to body)-->
       <div class="page-loader flex-column bg-dark bg-opacity-25">
           <span class="spinner-border text-primary" role="status"></span>

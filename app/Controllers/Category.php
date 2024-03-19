@@ -17,9 +17,12 @@ class Category extends BaseController
     {
         $this->addBreadcrumb('Administrateur', '#');
         $this->addBreadcrumb('Gestion des catégories', ['Category']);
+        
         if ($id_category == 'new') {
+            $stepModel = model('StepModel');
+            $steps = $stepModel->getAllStep();
             $this->addBreadcrumb('Création catégorie ', ['Category', 'edit', 'new']);
-            return $this->view('/category/edit');
+            return $this->view('/category/edit', ['steps' => $steps]);
         }
         $this->title = "Gérer l'catégorie";
         $categoryModel = model('CategoryModel');        
@@ -34,7 +37,7 @@ class Category extends BaseController
 
     public function postSearchCategory()
     {
-        $categoryModel = model('categoryModel');
+        $categoryModel = model('CategoryModel');
 
         // Paramètres de pagination et de recherche envoyés par DataTables
         $draw        = $this->request->getPost('draw');

@@ -45,9 +45,13 @@ class Login extends BaseController
                             $this->success("Vous êtes bien connecté");
                             $this->redirect($this->request->getGet('backto'));
                         } else {
+                            
+                            $this->success("Vous êtes bien connecté");
                             $this->redirect('/');
                         }
                     } else {
+                        
+                        $this->error("Mauvaise information de connexion");
                         $candidate->auth_attempt++;
                         if ($candidate->auth_attempt > 5) {
                             $userModel->setAuthAttempt(false,$email);
@@ -56,6 +60,7 @@ class Login extends BaseController
                 }
             }
         }
+        $this->error("Mauvaise information de connexion");
         $this->redirect('Login');
     }
 

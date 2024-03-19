@@ -28,6 +28,7 @@ class Ingredient
         $this->bio = $bio;
         $this->vegan = $vegan;
         $this->id_category = $id_category;
+
     }
     public function getId()
     {

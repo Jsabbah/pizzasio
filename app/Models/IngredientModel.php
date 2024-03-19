@@ -23,15 +23,18 @@ class IngredientModel extends Model
 
     public function getAllIngredient()
     {
+
         $builder = $this->builder();
         return $builder->get()->getResultArray();
     }
+    
 
-    public function getIngredientsByIdCategory($id_category)
+    public function getIngredientByIdCategory($id_category)
     {
-        return $this->where('id_category',$id_category)->get()->getResultArray();
-
+        return $this->where('id_category', $id_category)->findAll();
     }
+
+
     public function createIngredient(Ingredient $ingredient)
     {
         return $this->insert($ingredient);

@@ -1,25 +1,41 @@
 <?php
 
 namespace App\Controllers;
+
 class Dev extends BaseController
 {
     public function getIndex()
-    {   
+    {
         $categoryModel = model('categoryModel');
-        $categories = $categoryModel->getCategoriesByIdStep(5);
+        $categories = $categoryModel->getCategoryByIdStep(5);
         return $this->view('/dev/index', ['categories' => $categories]);
     }
 
-    public function postResult()
-    {    
-        $data = $this->request->getPost();
-        return $this->view('/dev/result', ['data' => $data]);
+    public function getResult()
+    {
+
+        $composePizzaModel = model('ComposePizzaModel');
+
+        $a = $composePizzaModel->getIngredientByPizzaId(1);
+        return $this->view('/dev/result', ['a' => $a]);
     }
 
-    public function getAjaxIngredients(){
+    public function postResult()
+
+    {        
+        $composePizzaModel = model('ComposePizzaModel');
+
+        $oldIngredients = $composePizzaModel->getIngredientByPizzaId($_POST['id']);
+                
+        return $this->view('/dev/result', ['a' => $_POST, 'old' => $oldIngredients]);
+    }
+
+    public function getAjaxIngredients()
+    {
         $idCateg = $this->request->getVar('idCateg');
         $ingredientModel = model('IngredientModel');
-        $ingredients = $ingredientModel->getIngredientsByIdCategory($idCateg);
+        $ingredients = $ingredientModel->getIngredientByIdCategory($idCateg);
+
         return $this->response->setJSON($ingredients);
     }
 }

@@ -3,8 +3,8 @@
   <!--begin::Logo-->
   <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
     <!--begin::Logo image-->
-    <a href="/">
-        <img alt="Logo" src="/assets/media/logos/color-logo-no-bg.svg" class="h-30px app-sidebar-logo-default">
+    <a href="<?= site_url('/') ?>">
+        <img alt="Logo" src="<?= site_url('/assets/media/logos/PizzaSioIconOnly.svg') ?>" class="h-45px app-sidebar-logo-default">
     </a>
     <!--end::Logo image-->
     <!--begin::Sidebar toggle-->
@@ -22,7 +22,7 @@
     <!--begin::Menu wrapper-->
     <div id="kt_app_sidebar_menu_wrapper" class="app-sidebar-wrapper hover-scroll-overlay-y my-5" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_app_sidebar_logo, #kt_app_sidebar_footer" data-kt-scroll-wrappers="#kt_app_sidebar_menu" data-kt-scroll-offset="5px">
       <!--begin::Menu-->
-      <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold px-3" id="#kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
+      <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold px-3" id="kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
         <?php
         foreach ($menus as $km => $menu) {
             if (isset($menu['admin']) && ! $user->isAdmin()) { continue; } 
@@ -97,13 +97,10 @@
     <div class="app-sidebar-footer flex-column-auto pt-2 pb-6 px-6" id="kt_app_sidebar_footer">
         <hr />
         <div class="text-center text-gray-600">Version : <?= $version = getenv('APP_VERSION') !== false ? getenv('APP_VERSION') : 'dev'; ?>
-        <br><img class="mx-auto w-50px"
-                 src="/assets/media/logos/dokimedia.png" alt=""/>
         </div>
     </div>
     <!--end::Footer-->
   </div>
-  <!--end::Sidebar-->
 </div>
 <style>
     [data-kt-app-layout=dark-sidebar] .app-sidebar {
