@@ -6,7 +6,8 @@ on:
     
 jobs:
   deploy:
-    DEBUG: true
+    env:
+      DEBUG: true
     runs-on: ubuntu-latest
     
     steps:
