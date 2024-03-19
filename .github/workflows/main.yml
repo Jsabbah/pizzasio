@@ -12,8 +12,8 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --no-dev
 
-    - name: Modify app.php
-      run: sed -i "s|\$baseURL = '.*';|\$baseURL = '${{ secrets.BASE_URL }}';|g" app/config/app.php
+    - name: Modify App.php
+      run: sed -i "s|\$baseURL = '.*';|\$baseURL = '${{ secrets.BASE_URL }}';|g" app/Config/App.php
 
     - name: Modify .env
       run: sed -i 's/ENVIRONMENT = development/ENVIRONMENT = production/g' .env
