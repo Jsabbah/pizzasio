@@ -27,8 +27,8 @@ jobs:
 
     - name: Modify menu URLs
       run: |
-        sed -i "s|url: \(/\S*\)|url: /${{ secrets.URL_PREFIX }}\1|g" path/to/your/menu/config/file.yml
-        cat path/to/your/menu/config/file.yml
+        sed -i "s|url: \(/\S*\)|url: /${{ secrets.URL_PREFIX }}\1|g" app/Menus/main.yaml
+        cat app/Menus/main.yaml
 
     - name: Create .htaccess for root directory
       run: |
